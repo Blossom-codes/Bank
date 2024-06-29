@@ -1,35 +1,26 @@
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-public class Account{
-    private final String name;
+public class Account {
+    private String name;
     private double acctBalance;
     Db db = new Db();
 
     public Account(String name, double acctBalance) {
-        this.name = name;
-        if (acctBalance > 0.0) {
-            this.acctBalance = acctBalance;
-        }
-    }
-    public void setAccount ()
-    {
         try {
-            PreparedStatement stmt = db.connect().prepareStatement("INSERT INTO accounts VALUES(?,?,?,?)");
-            stmt.setInt(1, 0);
-            stmt.setString(2, this.name);
-            stmt.setInt(3, Integer.parseInt(this.setAcctNo()));
-            stmt.setDouble(4, this.acctBalance);
-
-            int insertCount = stmt.executeUpdate();
-            if (insertCount > 0) {
-                System.out.println("Registration was successful");
+            if (!this.userExists(name)) {
+                this.name = name;
+                if (acctBalance > 0.00) {
+                    this.acctBalance = acctBalance;
+                } else {
+                    System.out.println("Balance cannot be 0.00 while creating an account ");
+                }
             } else {
-                System.out.println("Registration failed");
+                System.out.println("A user with this name exists already");
             }
-            stmt.close();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
@@ -43,5 +34,33 @@ public class Account{
         return "01" + this.digit() + this.digit() + this.digit() + this.digit() + this.digit() + this.digit() + this.digit() + this.digit() + this.digit();
     }
 
+    public void setAccount() {
+        try {
+            PreparedStatement stmt = db.connect().prepareStatement("INSERT INTO accounts (name, accountNumber, accountBalance) VALUES(?,?,?)");
 
+            stmt.setString(1, this.name);
+            stmt.setInt(2, Integer.parseInt(this.setAcctNo()));
+            stmt.setDouble(3, this.acctBalance);
+
+            int insertCount = stmt.executeUpdate();
+            if (insertCount > 0) {
+                System.out.println("Registration was successful");
+            } else {
+                System.out.println("Registration failed");
+            }
+            stmt.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+
+    public boolean userExists(String name) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT name FROM accounts WHERE name = ?";
+        PreparedStatement stmt = db.connect().prepareStatement(sql);
+        stmt.setString(1,name);
+        ResultSet row = stmt.executeQuery();
+
+        return row.next();
+    }
 }
