@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -182,14 +183,14 @@ public class Account implements Functions {
             if (updateCount > 0) {
                 updateStmt.close();
                 stmt.close();
-                System.out.println("Login was successful");
+                JOptionPane.showMessageDialog(null, "Login was successful","Notification", JOptionPane.INFORMATION_MESSAGE);
                 return true;
             } else {
-                System.out.println("Invalid login credentials");
+                JOptionPane.showMessageDialog(null, "Invalid login credentials");
                 return false;
             }
         } else {
-            System.out.println("Invalid login credentials");
+            JOptionPane.showMessageDialog(null, "Invalid login credentials");
             return false;
         }
 
@@ -214,19 +215,20 @@ public class Account implements Functions {
     }
 
     @Override
-    public void deposit(double amount, int acctNo) {
+    public void deposit(double amount, int acctNo, int pin) {
         try {
             String sql = "SELECT * FROM accounts WHERE accountNumber = ?";
             PreparedStatement stmt = db.connect().prepareStatement(sql);
             stmt.setInt(1, acctNo);
             ResultSet result = stmt.executeQuery();
-            if (result.next()) {
+            if (result.next() && (amount > 0)) {
 
-                String updateSql = "UPDATE accounts SET accountBalance = ? WHERE accountNumber = ? ";
+                String updateSql = "UPDATE accounts SET accountBalance = ? WHERE accountNumber = ? AND pin = ? ";
                 PreparedStatement updateStmt = db.connect().prepareStatement(updateSql);
                 double newValue = result.getDouble("accountBalance") + amount;
                 updateStmt.setDouble(1, newValue);
                 updateStmt.setInt(2, acctNo);
+                updateStmt.setInt(3, pin);
                 int updateCount = updateStmt.executeUpdate();
                 if (updateCount > 0) {
 

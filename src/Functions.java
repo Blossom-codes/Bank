@@ -7,7 +7,7 @@ public interface Functions {
 
     public boolean userExists(String name) throws SQLException, ClassNotFoundException;
 
-    public void deposit(double amount, int acctNo);
+    public void deposit(double amount, int acctNo,int pin);
     public void checkBalance(int acctNo) throws SQLException, ClassNotFoundException;
 
     public void transfer(double amount, int sender, int receiver);

@@ -1,36 +1,44 @@
+import javax.swing.*;
 import java.sql.SQLException;
 
 public class App extends Account {
     public void app() throws SQLException, ClassNotFoundException {
         Input input = new Input();
-        int option = input.inputIntDataFromTerminal("Welcome to Test Bank\n" +
+        String option = JOptionPane.showInputDialog("Welcome to Test Bank\n" +
                 "1 - Login\n" +
                 "2 - Create an account\n" +
                 "3 - Exit");
-        switch (option) {
+//        int option = input.inputIntDataFromTerminal("Welcome to Test Bank\n" +
+//                "1 - Login\n" +
+//                "2 - Create an account\n" +
+//                "3 - Exit");
+        switch (Integer.parseInt(option)) {
             case 1 -> { // Login
-                int userAcctNo = input.inputIntDataFromTerminal("Enter Account Number to login ");
-                int pin = input.inputIntDataFromTerminal("Enter pin to continue: ");
+                String userAcctNo = JOptionPane.showInputDialog("Enter Account Number to login ");
 
-                if (this.login(userAcctNo, pin)) {
-                    int newOption = input.inputIntDataFromTerminal("" +
+                String pin = JOptionPane.showInputDialog("Enter pin to continue: ");
+
+                if (this.login(Integer.parseInt(userAcctNo), Integer.parseInt(pin))) {
+                    String newOption = JOptionPane.showInputDialog("" +
                             "1 - Make a Transfer\n" +
                             "2 - Deposit funds\n" +
                             "3 - Check balance");
-                    switch (newOption) {
+                    switch (Integer.parseInt(newOption)) {
 
                         case 1 -> { // Make a Transfer
                             int receiver = input.inputIntDataFromTerminal("Enter account number: ");
                             double amount = input.inputIntDataFromTerminal("Enter amount: ");
-                            this.transfer(amount, userAcctNo, receiver);
-                            this.logout(userAcctNo);
+                            this.transfer(amount, Integer.parseInt(userAcctNo), receiver);
+                            this.logout(Integer.parseInt(userAcctNo));
                         }
                         case 2 -> { // Make a Deposit
-
+                            int amount = input.inputIntDataFromTerminal("Enter amount to deposit: ");
+                            this.deposit(amount, Integer.parseInt(userAcctNo), Integer.parseInt(pin));
+                            this.logout(Integer.parseInt(userAcctNo));
                         }
                         case 3 -> { // Check Balance
-                            this.checkBalance(userAcctNo);
-                            this.logout(userAcctNo);
+                            this.checkBalance(Integer.parseInt(userAcctNo));
+                            this.logout(Integer.parseInt(userAcctNo));
                         }
                     }
                 }
